@@ -1,0 +1,23 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "James Downs",
+    "longName": "Solar System",
+    "shortName": "solar System",
+    "projectType": "native",
+    "resources": {
+        "media": []
+    },
+    "sdkVersion": "3",
+    "targetPlatforms": [
+        "basalt"
+    ],
+    "uuid": "dda78b9c-9a94-488e-8bd4-4606d2b190a4",
+    "versionCode": "1",
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": true
+    }
+}
