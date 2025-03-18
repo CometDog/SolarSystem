@@ -41,6 +41,39 @@ typedef struct
 SolarSystemLayer *solar_system = NULL;
 
 /**
+ * Get the color of a given planet based on given PLANET enum. Always white if PBL_BW
+ * @param planet Enum of PLANET representing the planet color to return
+ */
+GColor get_planet_color(PLANET planet)
+{
+#ifdef PBL_BW
+    return GColorWhite; // All planets white on B&W display
+#else
+    switch (planet)
+    {
+    case MERCURY:
+        return GColorLightGray;
+    case VENUS:
+        return GColorBrass;
+    case EARTH:
+        return GColorBlueMoon;
+    case MARS:
+        return GColorRed;
+    case JUPITER:
+        return GColorRajah;
+    case SATURN:
+        return GColorChromeYellow;
+    case URANUS:
+        return GColorCeleste;
+    case NEPTUNE:
+        return GColorVividCerulean;
+    default:
+        return GColorWhite;
+    }
+#endif
+}
+
+/**
  * Function to return the PlanetLayer from the given planet enum value
  * @param planet The PLANET enum value specifying which PlanetLayer to return
  */
@@ -193,31 +226,35 @@ void update_planet_positions()
  */
 void layer_update_solar_system(Layer *layer, GContext *context)
 {
+#ifdef PBL_BW
+    graphics_context_set_fill_color(context, GColorWhite);
+#else
     graphics_context_set_fill_color(context, GColorYellow);
+#endif
     graphics_fill_circle(context, GPoint(solar_system->sun->x, solar_system->sun->y), solar_system->sun->size);
 
-    graphics_context_set_fill_color(context, GColorLightGray);
+    graphics_context_set_fill_color(context, get_planet_color(MERCURY));
     graphics_fill_circle(context, GPoint(solar_system->mercury->x, solar_system->mercury->y), solar_system->mercury->size);
 
-    graphics_context_set_fill_color(context, GColorBrass);
+    graphics_context_set_fill_color(context, get_planet_color(VENUS));
     graphics_fill_circle(context, GPoint(solar_system->venus->x, solar_system->venus->y), solar_system->venus->size);
 
-    graphics_context_set_fill_color(context, GColorBlueMoon);
+    graphics_context_set_fill_color(context, get_planet_color(EARTH));
     graphics_fill_circle(context, GPoint(solar_system->earth->x, solar_system->earth->y), solar_system->earth->size);
 
-    graphics_context_set_fill_color(context, GColorRed);
+    graphics_context_set_fill_color(context, get_planet_color(MARS));
     graphics_fill_circle(context, GPoint(solar_system->mars->x, solar_system->mars->y), solar_system->mars->size);
 
-    graphics_context_set_fill_color(context, GColorRajah);
+    graphics_context_set_fill_color(context, get_planet_color(JUPITER));
     graphics_fill_circle(context, GPoint(solar_system->jupiter->x, solar_system->jupiter->y), solar_system->jupiter->size);
 
-    graphics_context_set_fill_color(context, GColorChromeYellow);
+    graphics_context_set_fill_color(context, get_planet_color(SATURN));
     graphics_fill_circle(context, GPoint(solar_system->saturn->x, solar_system->saturn->y), solar_system->saturn->size);
 
-    graphics_context_set_fill_color(context, GColorCeleste);
+    graphics_context_set_fill_color(context, get_planet_color(URANUS));
     graphics_fill_circle(context, GPoint(solar_system->uranus->x, solar_system->uranus->y), solar_system->uranus->size);
 
-    graphics_context_set_fill_color(context, GColorVividCerulean);
+    graphics_context_set_fill_color(context, get_planet_color(NEPTUNE));
     graphics_fill_circle(context, GPoint(solar_system->neptune->x, solar_system->neptune->y), solar_system->neptune->size);
 
     update_planet_positions();
