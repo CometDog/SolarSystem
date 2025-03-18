@@ -214,10 +214,10 @@ void layer_update_solar_system(Layer *layer, GContext *context)
     graphics_context_set_fill_color(context, GColorChromeYellow);
     graphics_fill_circle(context, GPoint(solar_system->saturn->x, solar_system->saturn->y), solar_system->saturn->size);
 
-    graphics_context_set_fill_color(context, GColorCyan);
+    graphics_context_set_fill_color(context, GColorCeleste);
     graphics_fill_circle(context, GPoint(solar_system->uranus->x, solar_system->uranus->y), solar_system->uranus->size);
 
-    graphics_context_set_fill_color(context, GColorElectricBlue);
+    graphics_context_set_fill_color(context, GColorVividCerulean);
     graphics_fill_circle(context, GPoint(solar_system->neptune->x, solar_system->neptune->y), solar_system->neptune->size);
 
     update_planet_positions();
