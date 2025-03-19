@@ -1,5 +1,6 @@
 {
     "dependencies": {
-        "pebble-assist": "0.2.3"
+        "pebble-assist": "0.2.3",
+        "pbl-math": "0.0.1"
     }
 }

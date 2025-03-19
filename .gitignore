@@ -2,4 +2,4 @@ build
 .DS_STORE
 .lock-waf*
 .vscode
-@pebble-libraries
+src/@pebble-libraries

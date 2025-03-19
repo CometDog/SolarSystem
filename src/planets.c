@@ -1,5 +1,5 @@
 #include "planets.h"
-#include "fake-math.h"
+#include "@pebble-libraries/pbl-math/pbl-math.h"
 
 #define CENTER_X 72
 #define CENTER_Y 72
@@ -156,22 +156,22 @@ int calculate_planet_angle(PLANET planet, double days)
     // R: Reference frame. We adjust the reference frame position which is on the watch face, rather than calculate the anomaly to the perihelion as the original equation would do
     // Calculate position if orbit were circular
     double circular_position = planet_layer->position_epoch - (days * 360.0 / planet_layer->period_days);
-    circular_position = fake_fmod(circular_position + 360.0, 360.0);
+    circular_position = pbl_fmod(circular_position + 360.0, 360.0);
 
     // M
     // Calculate angular distance from perihelion
-    double mean_anomaly = fake_fmod(circular_position - planet_layer->perihelion + 360.0, 360.0);
+    double mean_anomaly = pbl_fmod(circular_position - planet_layer->perihelion + 360.0, 360.0);
 
     // 2e * sin(M)
     // Simulate faster motion near the perihleion and slower motion near the anthelion to simulate an elliptical orbit
-    double elliptical_correction = 2.0 * planet_layer->eccentricity * fake_sin(mean_anomaly * PI / 180.0);
+    double elliptical_correction = 2.0 * planet_layer->eccentricity * pbl_int_sin_deg(mean_anomaly * PI / 180.0);
 
     // R + 2e*sin(M)
     // Calculate elliptical position on the circular plane
     double actual_position = circular_position + elliptical_correction;
 
     // Adjust to 0-360 degrees
-    return (int)fake_fmod(actual_position + 360.0, 360.0);
+    return (int)pbl_fmod(actual_position + 360.0, 360.0);
 }
 
 /**
@@ -183,8 +183,8 @@ void update_planet_layer_position(PlanetLayer *planet_layer, int angle)
 {
     float scale = 1.0f / 1024.0f;
 
-    planet_layer->x = CENTER_X + (int)(planet_layer->fake_orbit * fake_cos(angle) * scale);
-    planet_layer->y = CENTER_Y + (int)(planet_layer->fake_orbit * fake_sin(angle) * scale);
+    planet_layer->x = CENTER_X + (int)(planet_layer->fake_orbit * pbl_cos_sin_deg(angle) * scale);
+    planet_layer->y = CENTER_Y + (int)(planet_layer->fake_orbit * pbl_int_sin_deg(angle) * scale);
 }
 
 /**
