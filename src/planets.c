@@ -9,6 +9,7 @@
  */
 typedef struct
 {
+    GColor color;
     int fake_orbit;
     int x;
     int y;
@@ -233,29 +234,16 @@ void layer_update_solar_system(Layer *layer, GContext *context)
 #endif
     graphics_fill_circle(context, GPoint(solar_system->sun->x, solar_system->sun->y), solar_system->sun->size);
 
-    graphics_context_set_fill_color(context, get_planet_color(MERCURY));
-    graphics_fill_circle(context, GPoint(solar_system->mercury->x, solar_system->mercury->y), solar_system->mercury->size);
+    PlanetLayer *planet_layers[] = {
+        solar_system->sun, solar_system->mercury, solar_system->venus,
+        solar_system->earth, solar_system->mars, solar_system->jupiter,
+        solar_system->saturn, solar_system->uranus, solar_system->neptune};
 
-    graphics_context_set_fill_color(context, get_planet_color(VENUS));
-    graphics_fill_circle(context, GPoint(solar_system->venus->x, solar_system->venus->y), solar_system->venus->size);
-
-    graphics_context_set_fill_color(context, get_planet_color(EARTH));
-    graphics_fill_circle(context, GPoint(solar_system->earth->x, solar_system->earth->y), solar_system->earth->size);
-
-    graphics_context_set_fill_color(context, get_planet_color(MARS));
-    graphics_fill_circle(context, GPoint(solar_system->mars->x, solar_system->mars->y), solar_system->mars->size);
-
-    graphics_context_set_fill_color(context, get_planet_color(JUPITER));
-    graphics_fill_circle(context, GPoint(solar_system->jupiter->x, solar_system->jupiter->y), solar_system->jupiter->size);
-
-    graphics_context_set_fill_color(context, get_planet_color(SATURN));
-    graphics_fill_circle(context, GPoint(solar_system->saturn->x, solar_system->saturn->y), solar_system->saturn->size);
-
-    graphics_context_set_fill_color(context, get_planet_color(URANUS));
-    graphics_fill_circle(context, GPoint(solar_system->uranus->x, solar_system->uranus->y), solar_system->uranus->size);
-
-    graphics_context_set_fill_color(context, get_planet_color(NEPTUNE));
-    graphics_fill_circle(context, GPoint(solar_system->neptune->x, solar_system->neptune->y), solar_system->neptune->size);
+    for (int i = 0; i < 9; i++)
+    {
+        graphics_context_set_fill_color(context, planet_layers[i]->color);
+        graphics_fill_circle(context, GPoint(planet_layers[i]->x, planet_layers[i]->y), planet_layers[i]->size);
+    }
 
     update_planet_positions();
 }
@@ -268,6 +256,11 @@ void load_solar_system(Layer *layer)
 {
     // Sun at center
     PlanetLayer *sun = malloc(sizeof(PlanetLayer));
+#ifdef PBL_BW
+    sun->color = GColorWhite;
+#else
+    sun->color = GColorYellow;
+#endif
     sun->fake_orbit = 0;
     sun->size = 8;
     sun->x = CENTER_X;
@@ -280,6 +273,7 @@ void load_solar_system(Layer *layer)
 
     // Mercury
     PlanetLayer *mercury = malloc(sizeof(PlanetLayer));
+    mercury->color = get_planet_color(MERCURY);
     mercury->fake_orbit = 13;
     mercury->size = 1;
     mercury->x = CENTER_X;
@@ -292,6 +286,7 @@ void load_solar_system(Layer *layer)
 
     // Venus
     PlanetLayer *venus = malloc(sizeof(PlanetLayer));
+    venus->color = get_planet_color(VENUS);
     venus->fake_orbit = 19;
     venus->size = 1;
     venus->x = CENTER_X;
@@ -304,6 +299,7 @@ void load_solar_system(Layer *layer)
 
     // Earth
     PlanetLayer *earth = malloc(sizeof(PlanetLayer));
+    earth->color = get_planet_color(EARTH);
     earth->fake_orbit = 25;
     earth->size = 1;
     earth->x = CENTER_X;
@@ -316,6 +312,7 @@ void load_solar_system(Layer *layer)
 
     // Mars
     PlanetLayer *mars = malloc(sizeof(PlanetLayer));
+    mars->color = get_planet_color(MARS);
     mars->fake_orbit = 31;
     mars->size = 1;
     mars->x = CENTER_X;
@@ -328,6 +325,7 @@ void load_solar_system(Layer *layer)
 
     // Jupiter
     PlanetLayer *jupiter = malloc(sizeof(PlanetLayer));
+    jupiter->color = get_planet_color(JUPITER);
     jupiter->fake_orbit = 41;
     jupiter->size = 5;
     jupiter->x = CENTER_X;
@@ -340,6 +338,7 @@ void load_solar_system(Layer *layer)
 
     // Saturn
     PlanetLayer *saturn = malloc(sizeof(PlanetLayer));
+    saturn->color = get_planet_color(SATURN);
     saturn->fake_orbit = 52;
     saturn->size = 4;
     saturn->x = CENTER_X;
@@ -352,6 +351,7 @@ void load_solar_system(Layer *layer)
 
     // Uranus
     PlanetLayer *uranus = malloc(sizeof(PlanetLayer));
+    uranus->color = get_planet_color(URANUS);
     uranus->fake_orbit = 61;
     uranus->size = 2;
     uranus->x = CENTER_X;
@@ -364,6 +364,7 @@ void load_solar_system(Layer *layer)
 
     // Neptune
     PlanetLayer *neptune = malloc(sizeof(PlanetLayer));
+    neptune->color = get_planet_color(NEPTUNE);
     neptune->fake_orbit = 68;
     neptune->size = 2;
     neptune->x = CENTER_X;
