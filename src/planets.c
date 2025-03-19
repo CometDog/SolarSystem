@@ -297,7 +297,7 @@ void load_solar_system(Layer *layer)
     venus->x = CENTER_X;
     venus->y = CENTER_Y + venus->fake_orbit;
     venus->period_days = 224.70;
-    venus->position_epoch = 180;
+    venus->position_epoch = 185;
     venus->eccentricity = 0.0068;
     venus->perihelion = 280;
     solar_system->venus = venus;
@@ -321,7 +321,7 @@ void load_solar_system(Layer *layer)
     mars->x = CENTER_X;
     mars->y = CENTER_Y + mars->fake_orbit;
     mars->period_days = 686.98;
-    mars->position_epoch = 215;
+    mars->position_epoch = 205;
     mars->eccentricity = 0.0934;
     mars->perihelion = 485;
     solar_system->mars = mars;
