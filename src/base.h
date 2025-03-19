@@ -1,2 +1,2 @@
 #include "pebble.h"
-#include "libs/pebble-assist.h"
+#include "@pebble-libraries/pebble-assist/pebble-assist.h"
