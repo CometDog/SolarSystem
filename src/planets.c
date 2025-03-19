@@ -334,7 +334,7 @@ void load_solar_system(Layer *layer)
     jupiter->y = CENTER_Y + jupiter->fake_orbit;
     jupiter->period_days = 4332.59;
     jupiter->position_epoch = 260;
-    jupiter->eccentricity = 0.484;
+    jupiter->eccentricity = 0.0489;
     jupiter->perihelion = 163;
     solar_system->jupiter = jupiter;
 
