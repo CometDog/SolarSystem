@@ -32,6 +32,7 @@ typedef struct
     PlanetLayer *saturn;
     PlanetLayer *uranus;
     PlanetLayer *neptune;
+    Layer *background;
 } SolarSystemLayer;
 
 /**
@@ -210,6 +211,9 @@ void update_planet_positions()
     update_planet_position(SATURN, calculate_planet_angle(SATURN, days));
     update_planet_position(URANUS, calculate_planet_angle(URANUS, days));
     update_planet_position(NEPTUNE, calculate_planet_angle(NEPTUNE, days));
+
+    if (solar_system->background)
+        layer_mark_dirty(solar_system->background);
 }
 
 /**
@@ -229,8 +233,6 @@ void layer_update_solar_system(Layer *layer, GContext *context)
         graphics_context_set_fill_color(context, planet_layers[i]->color);
         graphics_fill_circle(context, GPoint(planet_layers[i]->x, planet_layers[i]->y), planet_layers[i]->size);
     }
-
-    update_planet_positions();
 }
 
 /**
@@ -360,7 +362,9 @@ void load_solar_system(Layer *layer)
     neptune->perihelion = 193;
     solar_system->neptune = neptune;
 
-    layer_set_update_proc(layer, layer_update_solar_system);
+    solar_system->background = layer;
+    layer_set_update_proc(solar_system->background, layer_update_solar_system);
+    update_planet_positions();
 }
 
 /**
