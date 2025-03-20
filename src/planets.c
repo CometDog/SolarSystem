@@ -219,13 +219,6 @@ void update_planet_positions()
  */
 void layer_update_solar_system(Layer *layer, GContext *context)
 {
-#ifdef PBL_BW
-    graphics_context_set_fill_color(context, GColorWhite);
-#else
-    graphics_context_set_fill_color(context, GColorYellow);
-#endif
-    graphics_fill_circle(context, GPoint(solar_system->sun->x, solar_system->sun->y), solar_system->sun->size);
-
     PlanetLayer *planet_layers[] = {
         solar_system->sun, solar_system->mercury, solar_system->venus,
         solar_system->earth, solar_system->mars, solar_system->jupiter,
