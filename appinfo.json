@@ -13,7 +13,9 @@
     "sdkVersion": "3",
     "targetPlatforms": [
         "basalt",
-        "diorite"
+        "chalk",
+        "diorite",
+        "emery"
     ],
     "uuid": "dda78b9c-9a94-488e-8bd4-4606d2b190a4",
     "versionCode": "1",
