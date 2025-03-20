@@ -249,7 +249,7 @@ void load_solar_system(Layer *layer)
     sun->color = GColorYellow;
 #endif
     sun->fake_orbit = 0;
-    sun->size = 8 * DISPLAY_SCALE;
+    sun->size = 8 * DISPLAY_SCALE_X;
     sun->x = DISPLAY_CENTER_X;
     sun->y = DISPLAY_CENTER_Y;
     sun->period_days = 0.0;
@@ -261,8 +261,8 @@ void load_solar_system(Layer *layer)
     // Mercury
     PlanetLayer *mercury = malloc(sizeof(PlanetLayer));
     mercury->color = get_planet_color(MERCURY);
-    mercury->fake_orbit = 13 * DISPLAY_SCALE;
-    mercury->size = 1 * DISPLAY_SCALE;
+    mercury->fake_orbit = 13 * DISPLAY_SCALE_X;
+    mercury->size = 1 * DISPLAY_SCALE_X;
     mercury->x = DISPLAY_CENTER_X;
     mercury->y = DISPLAY_CENTER_Y + mercury->fake_orbit;
     mercury->period_days = 87.97;
@@ -274,8 +274,8 @@ void load_solar_system(Layer *layer)
     // Venus
     PlanetLayer *venus = malloc(sizeof(PlanetLayer));
     venus->color = get_planet_color(VENUS);
-    venus->fake_orbit = 19 * DISPLAY_SCALE;
-    venus->size = 1 * DISPLAY_SCALE;
+    venus->fake_orbit = 19 * DISPLAY_SCALE_X;
+    venus->size = 1 * DISPLAY_SCALE_X;
     venus->x = DISPLAY_CENTER_X;
     venus->y = DISPLAY_CENTER_Y + venus->fake_orbit;
     venus->period_days = 224.70;
@@ -287,8 +287,8 @@ void load_solar_system(Layer *layer)
     // Earth
     PlanetLayer *earth = malloc(sizeof(PlanetLayer));
     earth->color = get_planet_color(EARTH);
-    earth->fake_orbit = 25 * DISPLAY_SCALE;
-    earth->size = 1 * DISPLAY_SCALE;
+    earth->fake_orbit = 25 * DISPLAY_SCALE_X;
+    earth->size = 1 * DISPLAY_SCALE_X;
     earth->x = DISPLAY_CENTER_X;
     earth->y = DISPLAY_CENTER_Y + earth->fake_orbit;
     earth->period_days = 365.26;
@@ -300,8 +300,8 @@ void load_solar_system(Layer *layer)
     // Mars
     PlanetLayer *mars = malloc(sizeof(PlanetLayer));
     mars->color = get_planet_color(MARS);
-    mars->fake_orbit = 31 * DISPLAY_SCALE;
-    mars->size = 1 * DISPLAY_SCALE;
+    mars->fake_orbit = 31 * DISPLAY_SCALE_X;
+    mars->size = 1 * DISPLAY_SCALE_X;
     mars->x = DISPLAY_CENTER_X;
     mars->y = DISPLAY_CENTER_Y + mars->fake_orbit;
     mars->period_days = 686.98;
@@ -313,8 +313,8 @@ void load_solar_system(Layer *layer)
     // Jupiter
     PlanetLayer *jupiter = malloc(sizeof(PlanetLayer));
     jupiter->color = get_planet_color(JUPITER);
-    jupiter->fake_orbit = 41 * DISPLAY_SCALE;
-    jupiter->size = 5 * DISPLAY_SCALE;
+    jupiter->fake_orbit = 41 * DISPLAY_SCALE_X;
+    jupiter->size = 5 * DISPLAY_SCALE_X;
     jupiter->x = DISPLAY_CENTER_X;
     jupiter->y = DISPLAY_CENTER_Y + jupiter->fake_orbit;
     jupiter->period_days = 4332.59;
@@ -326,8 +326,8 @@ void load_solar_system(Layer *layer)
     // Saturn
     PlanetLayer *saturn = malloc(sizeof(PlanetLayer));
     saturn->color = get_planet_color(SATURN);
-    saturn->fake_orbit = 52 * DISPLAY_SCALE;
-    saturn->size = 4 * DISPLAY_SCALE;
+    saturn->fake_orbit = 52 * DISPLAY_SCALE_X;
+    saturn->size = 4 * DISPLAY_SCALE_X;
     saturn->x = DISPLAY_CENTER_X;
     saturn->y = DISPLAY_CENTER_Y + saturn->fake_orbit;
     saturn->period_days = 10759.22;
@@ -339,8 +339,8 @@ void load_solar_system(Layer *layer)
     // Uranus
     PlanetLayer *uranus = malloc(sizeof(PlanetLayer));
     uranus->color = get_planet_color(URANUS);
-    uranus->fake_orbit = 61 * DISPLAY_SCALE;
-    uranus->size = 2 * DISPLAY_SCALE;
+    uranus->fake_orbit = 61 * DISPLAY_SCALE_X;
+    uranus->size = 2 * DISPLAY_SCALE_X;
     uranus->x = DISPLAY_CENTER_X;
     uranus->y = DISPLAY_CENTER_Y + uranus->fake_orbit;
     uranus->period_days = 30688.50;
@@ -352,8 +352,8 @@ void load_solar_system(Layer *layer)
     // Neptune
     PlanetLayer *neptune = malloc(sizeof(PlanetLayer));
     neptune->color = get_planet_color(NEPTUNE);
-    neptune->fake_orbit = 68 * DISPLAY_SCALE;
-    neptune->size = 2 * DISPLAY_SCALE;
+    neptune->fake_orbit = 68 * DISPLAY_SCALE_X;
+    neptune->size = 2 * DISPLAY_SCALE_X;
     neptune->x = DISPLAY_CENTER_X;
     neptune->y = DISPLAY_CENTER_Y + neptune->fake_orbit;
     neptune->period_days = 60195.00;
