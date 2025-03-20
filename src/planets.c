@@ -116,7 +116,7 @@ PlanetLayer *get_planet_layer_from_planet(PLANET planet)
  * @param month Month of requested time since date (January is 1)
  * @param day Day of requested time since date (Day in a month, not year)
  */
-double days_since_epoch(int year, int month, int day)
+int32_t days_since_epoch(int year, int month, int day)
 {
     // Get supplied time
     struct tm time_info = {0};
@@ -127,17 +127,11 @@ double days_since_epoch(int year, int month, int day)
 
     time_t target_time = mktime(&time_info);
 
-    // Epoch (March 18, 2025)
-    struct tm epoch_tm = {0};
-    epoch_tm.tm_year = 125; // 2025 - 1900
-    epoch_tm.tm_mon = 2;    // March (mnoths are 0 indexed)
-    epoch_tm.tm_mday = 18;
-    epoch_tm.tm_hour = 0;
-
-    time_t epoch_time = mktime(&epoch_tm);
+    // Epoch (March 18, 2025) in seconds
+    static const time_t epoch_time = 1742342400;
 
     // Calculate difference in days
-    return difftime(target_time, epoch_time) / (60 * 60 * 24);
+    return (int32_t)((target_time - epoch_time) / (60 * 60 * 24));
 }
 
 /**
