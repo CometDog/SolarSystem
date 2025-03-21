@@ -12,7 +12,8 @@ typedef enum
     NEPTUNE
 } PLANET;
 
-void update_planet_positions();
+void update_planet_positions(tm *time);
+void update_planet_positions_now();
 void update_planet_position(PLANET planet, int angle);
 void load_solar_system(Layer *layer);
 void unload_solar_system(Layer *layer);

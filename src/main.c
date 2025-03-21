@@ -1,4 +1,5 @@
 #include "main.h"
+#include "@pebble-libraries/debug-tick-timer-service/debug-tick-timer-service.h"
 
 /**
  * Timer callback to set the idle flag
@@ -17,14 +18,6 @@ static void register_idle_timer()
   idle = false;
   app_timer_cancel(timer);
   timer = app_timer_register(180 * 1000, timer_callback, NULL);
-}
-
-/**
- * Updates the time and triggers animations
- */
-static void update_time()
-{
-  update_planet_positions();
 }
 
 /**
@@ -61,9 +54,9 @@ static void bt_handler(bool connected)
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed)
 {
   // Update time every minute
-  if (units_changed & MINUTE_UNIT)
+  if (units_changed & DAY_UNIT)
   {
-    update_time();
+    update_planet_positions(tick_time);
   }
 }
 
@@ -98,7 +91,7 @@ static void init()
   window_handlers(main_window, main_window_load, main_window_unload);
   window_stack_push(main_window, true);
 
-  tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
+  debug_tick_timer_service_subscribe(DAY_UNIT, tick_handler, REAL);
   accel_tap_service_subscribe(tap_handler);
   bluetooth_connection_service_subscribe(bt_handler);
 
@@ -110,6 +103,7 @@ static void init()
  */
 static void deinit()
 {
+  debug_tick_timer_service_unsubscribe();
   animation_unschedule_all();
   accel_tap_service_unsubscribe();
   bluetooth_connection_service_unsubscribe();

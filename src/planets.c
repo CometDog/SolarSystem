@@ -196,13 +196,12 @@ void update_planet_position(PLANET planet, int angle)
 }
 
 /**
- * Update the positions of all planets in the solar system based on current day
+ * Update the positions of all planets in the solar system based on given time
+ * @param time The time from which to update the planertary positions
  */
-void update_planet_positions()
+void update_planet_positions(tm *time)
 {
-    time_t epoch = time(NULL);
-    struct tm *t = localtime(&epoch);
-    double days = days_since_epoch(t->tm_year + 1900, t->tm_mon + 1, t->tm_mday);
+    double days = days_since_epoch(time->tm_year + 1900, time->tm_mon + 1, time->tm_mday);
     update_planet_position(MERCURY, calculate_planet_angle(MERCURY, days));
     update_planet_position(VENUS, calculate_planet_angle(VENUS, days));
     update_planet_position(EARTH, calculate_planet_angle(EARTH, days));
@@ -214,6 +213,16 @@ void update_planet_positions()
 
     if (solar_system->background)
         layer_mark_dirty(solar_system->background);
+}
+
+/**
+ * Update the positions of all planets in the solar system based on current day
+ */
+void update_planet_positions_now()
+{
+    time_t epoch = time(NULL);
+    struct tm *now = localtime(&epoch);
+    update_planet_positions(now);
 }
 
 /**
@@ -364,7 +373,7 @@ void load_solar_system(Layer *layer)
 
     solar_system->background = layer;
     layer_set_update_proc(solar_system->background, layer_update_solar_system);
-    update_planet_positions();
+    update_planet_positions_now();
 }
 
 /**
