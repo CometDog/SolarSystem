@@ -4,11 +4,18 @@
         ""
     ],
     "companyName": "James Downs",
-    "longName": "Solar System",
-    "shortName": "solar System",
+    "longName": "Planetarium",
+    "shortName": "Planetarium",
     "projectType": "native",
     "resources": {
-        "media": []
+        "media": [
+            {
+                "file": "icons/menu_icon.png",
+                "menuIcon": true,
+                "name": "IMAGE_MENU_ICON",
+                "type": "bitmap"
+            }
+        ]
     },
     "sdkVersion": "3",
     "targetPlatforms": [
