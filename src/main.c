@@ -1,63 +1,179 @@
 #include "main.h"
-#include "@pebble-libraries/debug-tick-timer-service/debug-tick-timer-service.h"
+
+#define LONG_PRESS_DELAY 300
+#define NEXT_STEP_DELAY 300
 
 /**
- * Timer callback to set the idle flag
- * @param data Unused
+ * Update the date display text
  */
-static void timer_callback(void *data)
+static void update_date_display()
 {
-  idle = true;
+    static char date_buffer[32];
+    struct tm *time_info = localtime(&simulation_time);
+    snprintf(date_buffer, sizeof(date_buffer), "%04d-%02d-%02d", time_info->tm_year + 1900, time_info->tm_mon + 1,
+             time_info->tm_mday);
+    text_layer_set_text(date_layer, date_buffer);
 }
 
 /**
- * Register 3 minute timer to set idle status
+ * Update the simulation time in the given direction and re-draw the planets
+ * @param direction 1 for forward, -1 for backward
  */
-static void register_idle_timer()
+static void tick_simulation_time(int direction)
 {
-  idle = false;
-  app_timer_cancel(timer);
-  timer = app_timer_register(180 * 1000, timer_callback, NULL);
+    if (direction != 0)
+    {
+        int64_t delta = (int64_t)direction * time_step_days * 86400;
+        int64_t new_time = (int64_t)simulation_time + delta;
+
+        // Clamp to limits if we would overflow
+        if (new_time > MAX_TIME_T)
+        {
+            simulation_time = (time_t)MAX_TIME_T;
+        }
+        else if (new_time < MIN_TIME_T)
+        {
+            simulation_time = (time_t)MIN_TIME_T;
+        }
+        else
+        {
+            simulation_time = (time_t)new_time;
+        }
+
+        struct tm *time_info = localtime(&simulation_time);
+        update_planet_positions(time_info);
+        update_date_display();
+    }
 }
 
 /**
- * Tap handler to reset the idle timer
- * @param axis The axis of the tap. Unused
- * @param direction The direction of the tap. Unused
+ * Timer callback for continuous time stepping
  */
-static void tap_handler(AccelAxisType axis, int32_t direction)
+static void step_timer_callback(void *data)
 {
-  register_idle_timer();
+    if (step_direction != 0)
+    {
+        tick_simulation_time(step_direction);
+        // Schedule next step
+        step_timer = app_timer_register(NEXT_STEP_DELAY, step_timer_callback, NULL);
+    }
 }
 
 /**
- * Bluetooth connection handler to vibrate on connection status change
- * @param connected Whether the connection is established
+ * Helper function to step time by a number of days in a given direction
+ * @param click_count Number of button clicks (1-4+)
+ * @param direction 1 for forward, -1 for backward
  */
-static void bt_handler(bool connected)
+static void step_time_by_clicks(uint8_t click_count, int direction)
 {
-  if (connected)
-  {
-    vibes_short_pulse();
-  }
-  else
-  {
-    vibes_double_pulse();
-  }
+    // Set step size based on click count
+    if (click_count == 1)
+    {
+        time_step_days = 1;
+    }
+    else if (click_count == 2)
+    {
+        time_step_days = 7;
+    }
+    else if (click_count == 3)
+    {
+        time_step_days = 30;
+    }
+    else
+    {
+        time_step_days = 365;
+    }
+
+    tick_simulation_time(direction);
 }
 
 /**
- * Handle time tick event
- * @param tick_time Pointer to the time structure. Unused
- * @param units_changed The units that have changed.
+ * UP button multi-click handler
+ * 1 click = 1 day, 2 clicks = 7 days, 3 clicks = 30 days, 4+ clicks = 365 days
  */
-static void tick_handler(struct tm *tick_time, TimeUnits units_changed)
+static void up_multi_click_handler(ClickRecognizerRef recognizer, void *context)
 {
-  // Update time every minute
-  if (units_changed & DAY_UNIT)
-  {
-    update_planet_positions(tick_time);
-  }
+    uint8_t click_count = click_number_of_clicks_counted(recognizer);
+    step_time_by_clicks(click_count, 1);
+}
+
+/**
+ * DOWN button multi-click handler
+ * 1 click = 1 day, 2 clicks = 7 days, 3 clicks = 30 days, 4+ clicks = 365 days
+ */
+static void down_multi_click_handler(ClickRecognizerRef recognizer, void *context)
+{
+    uint8_t click_count = click_number_of_clicks_counted(recognizer);
+    step_time_by_clicks(click_count, -1);
+}
+
+/**
+ * SELECT button handler - reset to current time
+ */
+static void select_click_handler(ClickRecognizerRef recognizer, void *context)
+{
+    time_step_days = 1;
+    simulation_time = time(NULL);
+    struct tm *time_info = localtime(&simulation_time);
+    update_planet_positions(time_info);
+    update_date_display();
+}
+
+/**
+ * UP long click handler - start continuous forward stepping
+ */
+static void up_long_click_handler(ClickRecognizerRef recognizer, void *context)
+{
+    step_direction = 1;
+    // Cancel existing timer
+    if (step_timer)
+        app_timer_cancel(step_timer);
+
+    // Start stepping
+    step_timer = app_timer_register(NEXT_STEP_DELAY, step_timer_callback, NULL);
+}
+
+/**
+ * DOWN long click handler - start continuous backward stepping
+ */
+static void down_long_click_handler(ClickRecognizerRef recognizer, void *context)
+{
+    step_direction = -1;
+
+    // Cancel existing timer
+    if (step_timer)
+        app_timer_cancel(step_timer);
+
+    // Start stepping
+    step_timer = app_timer_register(NEXT_STEP_DELAY, step_timer_callback, NULL);
+}
+
+/**
+ * Button release handler - stop continuous stepping
+ */
+static void button_release_handler(ClickRecognizerRef recognizer, void *context)
+{
+    step_direction = 0;
+    if (step_timer)
+    {
+        app_timer_cancel(step_timer);
+        step_timer = NULL;
+    }
+}
+
+/**
+ * Click config provider
+ */
+static void click_config_provider(void *context)
+{
+    // Support up to 4 clicks - last_click_only=false means handler called after each click
+    window_multi_click_subscribe(BUTTON_ID_UP, 1, 4, 0, false, up_multi_click_handler);
+    window_multi_click_subscribe(BUTTON_ID_DOWN, 1, 4, 0, false, down_multi_click_handler);
+    window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
+
+    // Long press handlers for continuous stepping
+    window_long_click_subscribe(BUTTON_ID_UP, LONG_PRESS_DELAY, up_long_click_handler, button_release_handler);
+    window_long_click_subscribe(BUTTON_ID_DOWN, LONG_PRESS_DELAY, down_long_click_handler, button_release_handler);
 }
 
 /**
@@ -66,12 +182,29 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed)
  */
 static void main_window_load(Window *window)
 {
-  window_set_background_color(window, GColorBlack);
-  GRect bounds = window_get_bounds(window);
-  background = layer_create(bounds);
-  init_solar_system();
-  load_solar_system(background);
-  layer_add_to_window(background, window);
+    window_set_background_color(window, GColorBlack);
+    GRect bounds = window_get_bounds(window);
+
+    // Create background layer for planets
+    background = layer_create(bounds);
+    init_solar_system();
+    load_solar_system(background);
+    layer_add_to_window(background, window);
+
+    // Create date text layer at top of screen
+    date_layer = text_layer_create(GRect(0, 5, bounds.size.w, 30));
+    text_layer_set_background_color(date_layer, GColorClear);
+    text_layer_set_text_color(date_layer, GColorWhite);
+    text_layer_set_text_alignment(date_layer, GTextAlignmentCenter);
+    text_layer_set_font(date_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+    layer_add_child(window_get_root_layer(window), text_layer_get_layer(date_layer));
+
+    // Initialize simulation time to current time
+    simulation_time = time(NULL);
+    update_date_display();
+
+    // Set up button handlers
+    window_set_click_config_provider(window, click_config_provider);
 }
 
 /**
@@ -80,6 +213,8 @@ static void main_window_load(Window *window)
  */
 static void main_window_unload(Window *window)
 {
+    text_layer_destroy(date_layer);
+    layer_destroy(background);
 }
 
 /**
@@ -87,15 +222,9 @@ static void main_window_unload(Window *window)
  */
 static void init()
 {
-  main_window = window_create();
-  window_handlers(main_window, main_window_load, main_window_unload);
-  window_stack_push(main_window, true);
-
-  debug_tick_timer_service_subscribe(DAY_UNIT, tick_handler, REAL);
-  accel_tap_service_subscribe(tap_handler);
-  bluetooth_connection_service_subscribe(bt_handler);
-
-  register_idle_timer();
+    main_window = window_create();
+    window_handlers(main_window, main_window_load, main_window_unload);
+    window_stack_push(main_window, true);
 }
 
 /**
@@ -103,11 +232,7 @@ static void init()
  */
 static void deinit()
 {
-  debug_tick_timer_service_unsubscribe();
-  animation_unschedule_all();
-  accel_tap_service_unsubscribe();
-  bluetooth_connection_service_unsubscribe();
-  window_destroy_safe(main_window);
+    window_destroy_safe(main_window);
 }
 
 /**
@@ -115,7 +240,7 @@ static void deinit()
  */
 int main(void)
 {
-  init();
-  app_event_loop();
-  deinit();
+    init();
+    app_event_loop();
+    deinit();
 }
