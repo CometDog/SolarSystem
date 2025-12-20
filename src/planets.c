@@ -146,6 +146,8 @@ int calculate_planet_angle(PLANET planet, double days)
     if (!planet_layer)
         return -1;
 
+    float scale = 1.0f / 1024.0f;
+
     // Calculating formula:  θ ≈ R + 2e*sin(M) (derived from Kepler's Equation: θ ≈ M + 2e*sin(M))
     // R: Reference frame. We adjust the reference frame position which is on the watch face, rather than calculate the anomaly to the perihelion as the original equation would do
     // Calculate position if orbit were circular
@@ -158,7 +160,7 @@ int calculate_planet_angle(PLANET planet, double days)
 
     // 2e * sin(M)
     // Simulate faster motion near the perihleion and slower motion near the anthelion to simulate an elliptical orbit
-    double elliptical_correction = 2.0 * planet_layer->eccentricity * pbl_int_sin_deg(mean_anomaly * PI / 180.0);
+    double elliptical_correction = 2.0 * planet_layer->eccentricity * pbl_int_sin_deg(mean_anomaly * PI / 180.0) * scale;
 
     // R + 2e*sin(M)
     // Calculate elliptical position on the circular plane
@@ -316,7 +318,7 @@ void load_solar_system(Layer *layer)
     mars->period_days = 686.98;
     mars->position_epoch = 205;
     mars->eccentricity = 0.0934;
-    mars->perihelion = 485;
+    mars->perihelion = 125;
     solar_system->mars = mars;
 
     // Jupiter
